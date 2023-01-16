@@ -8,8 +8,10 @@ import java.util.List;
 
 @Component
 public class FindAllSuperheroUseCaseImpl implements FindAllSuperheroUseCase {
+
     @Override
     public List<Superhero> execute() {
-        return null;
+        Superhero superhero = new Superhero();
+        return List.of(superhero);
     }
 }
