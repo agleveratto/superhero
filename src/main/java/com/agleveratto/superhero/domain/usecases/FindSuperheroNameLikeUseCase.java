@@ -5,5 +5,5 @@ import com.agleveratto.superhero.infrastructure.entities.Superhero;
 import java.util.List;
 
 public interface FindSuperheroNameLikeUseCase {
-    List<Superhero> execute();
+    List<Superhero> execute(String value);
 }
