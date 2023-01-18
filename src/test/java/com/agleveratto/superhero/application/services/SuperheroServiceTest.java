@@ -2,6 +2,7 @@ package com.agleveratto.superhero.application.services;
 
 import com.agleveratto.superhero.application.exceptions.NotFoundException;
 import com.agleveratto.superhero.domain.usecases.FindAllSuperheroUseCase;
+import com.agleveratto.superhero.domain.usecases.FindSuperheroByIdUseCase;
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -25,6 +27,9 @@ public class SuperheroServiceTest {
 
     @Mock
     FindAllSuperheroUseCase findAllSuperheroUseCase;
+
+    @Mock
+    FindSuperheroByIdUseCase findSuperheroByIdUseCase;
 
     private static Superhero superhero;
 
@@ -51,6 +56,8 @@ public class SuperheroServiceTest {
 
     @Test
     void findById_givenId_thenReturnSuperhero(){
+        when(findSuperheroByIdUseCase.execute(1L)).thenReturn(Optional.of(superhero));
         assertThat(superheroService.findById(1L)).isNotNull();
+        verify(findSuperheroByIdUseCase).execute(1L);
     }
 }
