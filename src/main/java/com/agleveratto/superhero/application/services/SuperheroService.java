@@ -49,6 +49,9 @@ public class SuperheroService {
     }
 
     public int update(Superhero superhero) {
-        return modifySuperheroUseCase.execute(superhero);
+        int rowsModified = modifySuperheroUseCase.execute(superhero);
+        if (rowsModified == 0)
+            throw new NotFoundException("superhero not found by id " + superhero.getId());
+        return rowsModified;
     }
 }

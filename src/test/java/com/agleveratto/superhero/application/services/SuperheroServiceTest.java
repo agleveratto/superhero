@@ -99,7 +99,9 @@ public class SuperheroServiceTest {
 
     @Test
     void update_givenSuperheroModified_thenThrowNotFoundException(){
+        when(modifySuperheroUseCase.execute(superhero)).thenReturn(0);
         assertThatThrownBy(() -> superheroService.update(superhero)).isInstanceOf(NotFoundException.class);
+        verify(modifySuperheroUseCase).execute(superhero);
     }
 
 }
