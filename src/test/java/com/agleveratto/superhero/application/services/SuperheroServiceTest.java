@@ -63,6 +63,8 @@ public class SuperheroServiceTest {
 
     @Test
     void findById_givenId_thenThrowNotFoundException(){
+        when(findSuperheroByIdUseCase.execute(2L)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> superheroService.findById(2L)).isInstanceOf(NotFoundException.class);
+        verify(findSuperheroByIdUseCase).execute(2L);
     }
 }

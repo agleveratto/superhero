@@ -7,6 +7,7 @@ import com.agleveratto.superhero.infrastructure.entities.Superhero;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SuperheroService {
@@ -27,6 +28,9 @@ public class SuperheroService {
     }
 
     public Superhero findById(Long id) {
-        return findSuperheroByIdUseCase.execute(id).get();
+        Optional<Superhero> optionalSuperhero = findSuperheroByIdUseCase.execute(id);
+        if (optionalSuperhero.isEmpty())
+            throw new NotFoundException("superhero not found by id " + id);
+        return optionalSuperhero.get();
     }
 }
