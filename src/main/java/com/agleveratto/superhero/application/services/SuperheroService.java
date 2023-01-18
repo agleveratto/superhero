@@ -1,10 +1,7 @@
 package com.agleveratto.superhero.application.services;
 
 import com.agleveratto.superhero.application.exceptions.NotFoundException;
-import com.agleveratto.superhero.domain.usecases.FindAllSuperheroUseCase;
-import com.agleveratto.superhero.domain.usecases.FindSuperheroByIdUseCase;
-import com.agleveratto.superhero.domain.usecases.FindSuperheroNameLikeUseCase;
-import com.agleveratto.superhero.domain.usecases.ModifySuperheroUseCase;
+import com.agleveratto.superhero.domain.usecases.*;
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +15,16 @@ public class SuperheroService {
     private final FindSuperheroByIdUseCase findSuperheroByIdUseCase;
     private final FindSuperheroNameLikeUseCase findSuperheroNameLikeUseCase;
     private final ModifySuperheroUseCase modifySuperheroUseCase;
+    private final DeleteSuperheroUseCase deleteSuperheroUseCase;
 
     public SuperheroService(FindAllSuperheroUseCase findAllSuperheroUseCase, FindSuperheroByIdUseCase findSuperheroByIdUseCase,
-                            FindSuperheroNameLikeUseCase findSuperheroNameLikeUseCase, ModifySuperheroUseCase modifySuperheroUseCase) {
+                            FindSuperheroNameLikeUseCase findSuperheroNameLikeUseCase, ModifySuperheroUseCase modifySuperheroUseCase,
+                            DeleteSuperheroUseCase deleteSuperheroUseCase) {
         this.findAllSuperheroUseCase = findAllSuperheroUseCase;
         this.findSuperheroByIdUseCase = findSuperheroByIdUseCase;
         this.findSuperheroNameLikeUseCase = findSuperheroNameLikeUseCase;
         this.modifySuperheroUseCase = modifySuperheroUseCase;
+        this.deleteSuperheroUseCase = deleteSuperheroUseCase;
     }
 
     public List<Superhero> findAll() {
@@ -53,5 +53,9 @@ public class SuperheroService {
         if (rowsModified == 0)
             throw new NotFoundException("superhero not found by id " + superhero.getId());
         return rowsModified;
+    }
+
+    public void delete(Long id) {
+        deleteSuperheroUseCase.execute(id);
     }
 }

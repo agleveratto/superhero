@@ -1,10 +1,7 @@
 package com.agleveratto.superhero.application.services;
 
 import com.agleveratto.superhero.application.exceptions.NotFoundException;
-import com.agleveratto.superhero.domain.usecases.FindAllSuperheroUseCase;
-import com.agleveratto.superhero.domain.usecases.FindSuperheroByIdUseCase;
-import com.agleveratto.superhero.domain.usecases.FindSuperheroNameLikeUseCase;
-import com.agleveratto.superhero.domain.usecases.ModifySuperheroUseCase;
+import com.agleveratto.superhero.domain.usecases.*;
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,8 +15,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class SuperheroServiceTest {
@@ -38,6 +34,9 @@ public class SuperheroServiceTest {
 
     @Mock
     ModifySuperheroUseCase modifySuperheroUseCase;
+
+    @Mock
+    DeleteSuperheroUseCase deleteSuperheroUseCase;
 
     private static Superhero superhero;
 
@@ -104,4 +103,9 @@ public class SuperheroServiceTest {
         verify(modifySuperheroUseCase).execute(superhero);
     }
 
+    @Test
+    void delete_givenId_thenDeleteSuperhero(){
+        superheroService.delete(1L);
+        verify(deleteSuperheroUseCase).execute(1L);
+    }
 }
