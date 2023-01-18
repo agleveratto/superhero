@@ -96,4 +96,10 @@ public class SuperheroServiceTest {
         assertThat(superheroService.update(superhero)).isNotZero();
         verify(modifySuperheroUseCase).execute(superhero);
     }
+
+    @Test
+    void update_givenSuperheroModified_thenThrowNotFoundException(){
+        assertThatThrownBy(() -> superheroService.update(superhero)).isInstanceOf(NotFoundException.class);
+    }
+
 }
