@@ -1,10 +1,9 @@
 package com.agleveratto.superhero.infrastructure.controllers;
 
-import com.agleveratto.superhero.domain.usecases.FindAllSuperheroUseCase;
+import com.agleveratto.superhero.application.services.SuperheroService;
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -12,14 +11,36 @@ import java.util.List;
 @RequestMapping(value = "/api/v1")
 public class SuperheroController {
 
-    private final FindAllSuperheroUseCase findAllSuperheroUseCase;
+    private final SuperheroService superheroService;
 
-    public SuperheroController(FindAllSuperheroUseCase findAllSuperheroUseCase) {
-        this.findAllSuperheroUseCase = findAllSuperheroUseCase;
+    public SuperheroController(SuperheroService superheroService) {
+        this.superheroService = superheroService;
     }
 
-    @GetMapping("/")
-    public List<Superhero> getAll(){
-        return findAllSuperheroUseCase.execute();
+
+    @GetMapping(value = "/")
+    public ResponseEntity<List<Superhero>> findAll(){
+        return ResponseEntity.ok(superheroService.findAll());
     }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Superhero> findById(@PathVariable("id") Long id){
+        return ResponseEntity.ok(superheroService.findById(id));
+    }
+
+    @GetMapping(value = "/name/{nameContains}")
+    public ResponseEntity<List<Superhero>> findByContains(@PathVariable("nameContains") String nameContains){
+        return ResponseEntity.ok(superheroService.findByContains(nameContains));
+    }
+
+    @PutMapping(value = "/")
+    public ResponseEntity<String> update(@RequestBody Superhero superhero){
+        return ResponseEntity.ok(superheroService.update(superhero));
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<String> delete(@PathVariable("id") Long id){
+        return ResponseEntity.ok(superheroService.delete(id));
+    }
+
 }

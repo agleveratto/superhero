@@ -49,18 +49,19 @@ public class SuperheroService {
         return superheroes;
     }
 
-    public int update(Superhero superhero) {
+    public String update(Superhero superhero) {
         int rowsModified = modifySuperheroUseCase.execute(superhero);
         if (rowsModified == 0)
             throw new NotFoundException("superhero not found by id " + superhero.getId());
-        return rowsModified;
+        return "superhero modified";
     }
 
-    public void delete(Long id) {
+    public String delete(Long id) {
         try{
             deleteSuperheroUseCase.execute(id);
         } catch (EmptyResultDataAccessException exception) {
             throw new NotFoundException(exception.getMessage());
         }
+        return "superhero deleted";
     }
 }

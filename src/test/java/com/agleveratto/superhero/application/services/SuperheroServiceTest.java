@@ -93,7 +93,7 @@ public class SuperheroServiceTest {
     @Test
     void update_givenSuperheroModified_thenApplyModifications(){
         when(modifySuperheroUseCase.execute(superhero)).thenReturn(1);
-        assertThat(superheroService.update(superhero)).isNotZero();
+        assertThat(superheroService.update(superhero)).isEqualTo("superhero updated");
         verify(modifySuperheroUseCase).execute(superhero);
     }
 
