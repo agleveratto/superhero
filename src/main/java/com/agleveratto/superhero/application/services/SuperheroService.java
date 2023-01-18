@@ -1,5 +1,6 @@
 package com.agleveratto.superhero.application.services;
 
+import com.agleveratto.superhero.application.exceptions.NotFoundException;
 import com.agleveratto.superhero.domain.usecases.FindAllSuperheroUseCase;
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,9 @@ public class SuperheroService {
     }
 
     public List<Superhero> findAll() {
-        return findAllSuperheroUseCase.execute();
+        List<Superhero> superheroes = findAllSuperheroUseCase.execute();
+        if(superheroes.isEmpty())
+            throw new NotFoundException("superheroes not found!");
+        return superheroes;
     }
 }
