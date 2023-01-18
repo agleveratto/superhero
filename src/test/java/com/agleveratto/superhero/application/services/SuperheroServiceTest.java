@@ -3,6 +3,7 @@ package com.agleveratto.superhero.application.services;
 import com.agleveratto.superhero.application.exceptions.NotFoundException;
 import com.agleveratto.superhero.domain.usecases.FindAllSuperheroUseCase;
 import com.agleveratto.superhero.domain.usecases.FindSuperheroByIdUseCase;
+import com.agleveratto.superhero.domain.usecases.FindSuperheroNameLikeUseCase;
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,9 @@ public class SuperheroServiceTest {
 
     @Mock
     FindSuperheroByIdUseCase findSuperheroByIdUseCase;
+
+    @Mock
+    FindSuperheroNameLikeUseCase findSuperheroNameLikeUseCase;
 
     private static Superhero superhero;
 
@@ -70,6 +74,8 @@ public class SuperheroServiceTest {
 
     @Test
     void findByContains_givenString_thenReturnList(){
-        assertThat(superheroService.findByContains("superman")).isNotEmpty();
+        when(findSuperheroNameLikeUseCase.execute("man")).thenReturn(List.of(superhero));
+        assertThat(superheroService.findByContains("man")).isNotEmpty();
+        verify(findSuperheroNameLikeUseCase).execute("man");
     }
 }

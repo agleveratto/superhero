@@ -3,10 +3,10 @@ package com.agleveratto.superhero.application.services;
 import com.agleveratto.superhero.application.exceptions.NotFoundException;
 import com.agleveratto.superhero.domain.usecases.FindAllSuperheroUseCase;
 import com.agleveratto.superhero.domain.usecases.FindSuperheroByIdUseCase;
+import com.agleveratto.superhero.domain.usecases.FindSuperheroNameLikeUseCase;
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,10 +15,13 @@ public class SuperheroService {
 
     private final FindAllSuperheroUseCase findAllSuperheroUseCase;
     private final FindSuperheroByIdUseCase findSuperheroByIdUseCase;
+    private final FindSuperheroNameLikeUseCase findSuperheroNameLikeUseCase;
 
-    public SuperheroService(FindAllSuperheroUseCase findAllSuperheroUseCase, FindSuperheroByIdUseCase findSuperheroByIdUseCase) {
+    public SuperheroService(FindAllSuperheroUseCase findAllSuperheroUseCase, FindSuperheroByIdUseCase findSuperheroByIdUseCase,
+                            FindSuperheroNameLikeUseCase findSuperheroNameLikeUseCase) {
         this.findAllSuperheroUseCase = findAllSuperheroUseCase;
         this.findSuperheroByIdUseCase = findSuperheroByIdUseCase;
+        this.findSuperheroNameLikeUseCase = findSuperheroNameLikeUseCase;
     }
 
     public List<Superhero> findAll() {
@@ -36,6 +39,6 @@ public class SuperheroService {
     }
 
     public List<Superhero> findByContains(String nameContains) {
-        return new ArrayList<>();
+        return findSuperheroNameLikeUseCase.execute(nameContains);
     }
 }
