@@ -39,4 +39,11 @@ public class SuperheroServiceTest {
         assertThat(superheroService.findAll()).isNotEmpty();
         verify(findAllSuperheroUseCase).execute();
     }
+
+    @Test
+    void findAll_whenCallMethod_thenReturnEmptyList(){
+        when(findAllSuperheroUseCase.execute()).thenReturn(List.of());
+        assertThat(superheroService.findAll()).isNotEmpty();
+        verify(findAllSuperheroUseCase).execute();
+    }
 }
