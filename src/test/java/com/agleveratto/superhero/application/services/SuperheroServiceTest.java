@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.lang.reflect.Executable;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
