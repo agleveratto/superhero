@@ -36,14 +36,14 @@ public class FindSuperheroNameLikeUseCaseImplTest {
     @Test
     void execute_givenARandomString_thenReturnEmptyList() {
         assertThat(findSuperheroNameLikeUseCase.execute("bat")).isEmpty();
-        verify(repository).findByNameLike("bat");
+        verify(repository).findByNameContainingIgnoreCase("bat");
     }
 
     @Test
     void execute_givenAString_thenReturnSuperheroList() {
-        when(repository.findByNameLike("man")).thenReturn(List.of(superhero));
+        when(repository.findByNameContainingIgnoreCase("man")).thenReturn(List.of(superhero));
         assertThat(findSuperheroNameLikeUseCase.execute("man")).containsExactly(superhero);
-        verify(repository).findByNameLike("man");
+        verify(repository).findByNameContainingIgnoreCase("man");
     }
 
 }

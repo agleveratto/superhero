@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface SuperheroRepository extends JpaRepository<Superhero, Long> {
-    List<Superhero> findByNameLike(String value);
+    List<Superhero> findByNameContainingIgnoreCase(String value);
 
     @Modifying
     @Query("update Superhero s set s.name = ?2 where s.id = ?1")

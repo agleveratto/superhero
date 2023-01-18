@@ -18,6 +18,6 @@ public class FindSuperheroNameLikeUseCaseImpl implements FindSuperheroNameLikeUs
 
     @Override
     public List<Superhero> execute(String value) {
-        return repository.findByNameLike(value);
+        return repository.findByNameContainingIgnoreCase(value);
     }
 }
