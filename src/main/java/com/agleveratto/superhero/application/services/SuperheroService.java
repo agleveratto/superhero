@@ -3,6 +3,7 @@ package com.agleveratto.superhero.application.services;
 import com.agleveratto.superhero.application.exceptions.NotFoundException;
 import com.agleveratto.superhero.domain.usecases.*;
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,6 +57,10 @@ public class SuperheroService {
     }
 
     public void delete(Long id) {
-        deleteSuperheroUseCase.execute(id);
+        try{
+            deleteSuperheroUseCase.execute(id);
+        } catch (EmptyResultDataAccessException exception) {
+            throw new NotFoundException(exception.getMessage());
+        }
     }
 }

@@ -15,7 +15,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class SuperheroServiceTest {
@@ -107,5 +108,13 @@ public class SuperheroServiceTest {
     void delete_givenId_thenDeleteSuperhero(){
         superheroService.delete(1L);
         verify(deleteSuperheroUseCase).execute(1L);
+    }
+
+    @Test
+    void delete_givenNotExistId_thenThrowNotFoundException(){
+        Superhero superheroNotExisted = new Superhero();
+        superheroNotExisted.setId(2L);
+        superheroNotExisted.setName("betman");
+        assertThatThrownBy(() -> superheroService.update(superheroNotExisted)).isInstanceOf(NotFoundException.class);
     }
 }
