@@ -1,10 +1,11 @@
 package com.agleveratto.superhero.application.usecases;
 
-import com.agleveratto.superhero.application.exceptions.NotFoundException;
 import com.agleveratto.superhero.domain.usecases.FindSuperheroByIdUseCase;
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
 import com.agleveratto.superhero.infrastructure.repositories.SuperheroRepository;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 public class FindSuperheroByIdUseCaseImpl implements FindSuperheroByIdUseCase {
@@ -16,7 +17,7 @@ public class FindSuperheroByIdUseCaseImpl implements FindSuperheroByIdUseCase {
     }
 
     @Override
-    public Superhero execute(Long id) {
-        return repository.findById(id).orElseThrow(NotFoundException::new);
+    public Optional<Superhero> execute(Long id) {
+        return repository.findById(id);
     }
 }

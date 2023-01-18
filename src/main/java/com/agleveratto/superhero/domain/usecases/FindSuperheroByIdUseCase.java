@@ -2,7 +2,9 @@ package com.agleveratto.superhero.domain.usecases;
 
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
 
+import java.util.Optional;
+
 public interface FindSuperheroByIdUseCase {
 
-    Superhero execute(Long id);
+    Optional<Superhero> execute(Long id);
 }
