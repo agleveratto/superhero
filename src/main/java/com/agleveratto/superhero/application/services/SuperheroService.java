@@ -39,6 +39,9 @@ public class SuperheroService {
     }
 
     public List<Superhero> findByContains(String nameContains) {
-        return findSuperheroNameLikeUseCase.execute(nameContains);
+        List<Superhero> superheroes = findSuperheroNameLikeUseCase.execute(nameContains);
+        if (superheroes.isEmpty())
+            throw new NotFoundException("superheroes not found that contains the word [" + nameContains + "] into their name");
+        return superheroes;
     }
 }
