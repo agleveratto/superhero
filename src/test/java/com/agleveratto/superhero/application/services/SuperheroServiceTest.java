@@ -4,6 +4,7 @@ import com.agleveratto.superhero.application.exceptions.NotFoundException;
 import com.agleveratto.superhero.domain.usecases.FindAllSuperheroUseCase;
 import com.agleveratto.superhero.domain.usecases.FindSuperheroByIdUseCase;
 import com.agleveratto.superhero.domain.usecases.FindSuperheroNameLikeUseCase;
+import com.agleveratto.superhero.domain.usecases.ModifySuperheroUseCase;
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,9 @@ public class SuperheroServiceTest {
 
     @Mock
     FindSuperheroNameLikeUseCase findSuperheroNameLikeUseCase;
+
+    @Mock
+    ModifySuperheroUseCase modifySuperheroUseCase;
 
     private static Superhero superhero;
 
@@ -88,6 +92,8 @@ public class SuperheroServiceTest {
 
     @Test
     void update_givenSuperheroModified_thenApplyModifications(){
+        when(modifySuperheroUseCase.execute(superhero)).thenReturn(1);
         assertThat(superheroService.update(superhero)).isNotZero();
+        verify(modifySuperheroUseCase).execute(superhero);
     }
 }

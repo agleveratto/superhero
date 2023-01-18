@@ -17,12 +17,14 @@ public class SuperheroService {
     private final FindAllSuperheroUseCase findAllSuperheroUseCase;
     private final FindSuperheroByIdUseCase findSuperheroByIdUseCase;
     private final FindSuperheroNameLikeUseCase findSuperheroNameLikeUseCase;
+    private final ModifySuperheroUseCase modifySuperheroUseCase;
 
     public SuperheroService(FindAllSuperheroUseCase findAllSuperheroUseCase, FindSuperheroByIdUseCase findSuperheroByIdUseCase,
-                            FindSuperheroNameLikeUseCase findSuperheroNameLikeUseCase) {
+                            FindSuperheroNameLikeUseCase findSuperheroNameLikeUseCase, ModifySuperheroUseCase modifySuperheroUseCase) {
         this.findAllSuperheroUseCase = findAllSuperheroUseCase;
         this.findSuperheroByIdUseCase = findSuperheroByIdUseCase;
         this.findSuperheroNameLikeUseCase = findSuperheroNameLikeUseCase;
+        this.modifySuperheroUseCase = modifySuperheroUseCase;
     }
 
     public List<Superhero> findAll() {
@@ -47,6 +49,6 @@ public class SuperheroService {
     }
 
     public int update(Superhero superhero) {
-        return 0;
+        return modifySuperheroUseCase.execute(superhero);
     }
 }
