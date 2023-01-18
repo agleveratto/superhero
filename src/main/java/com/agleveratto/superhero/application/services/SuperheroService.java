@@ -22,4 +22,8 @@ public class SuperheroService {
             throw new NotFoundException("superheroes not found!");
         return superheroes;
     }
+
+    public Superhero findById(Long id) {
+        return null;
+    }
 }
