@@ -78,4 +78,9 @@ public class SuperheroServiceTest {
         assertThat(superheroService.findByContains("man")).isNotEmpty();
         verify(findSuperheroNameLikeUseCase).execute("man");
     }
+
+    @Test
+    void findByContains_givenAString_thenThrowNotFoundException() {
+        assertThatThrownBy(() -> superheroService.findByContains("men")).isInstanceOf(NotFoundException.class);
+    }
 }
