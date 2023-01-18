@@ -13,6 +13,6 @@ public interface SuperheroRepository extends JpaRepository<Superhero, Long> {
     List<Superhero> findByNameLike(String value);
 
     @Modifying
-    @Query("update superhero set superhero.name = ?2 where superhero.id = ?1")
-    int updateSuperhero(Long id, String name);
+    @Query("update Superhero s set s.name = ?2 where s.id = ?1")
+    int updateSuperheroSetNameForId(Long id, String name);
 }

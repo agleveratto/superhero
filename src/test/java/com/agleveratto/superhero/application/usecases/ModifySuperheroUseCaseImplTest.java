@@ -40,9 +40,9 @@ public class ModifySuperheroUseCaseImplTest {
     @Test
     void execute_givenSuperheroModified_thenSaveIntoDB(){
         when(findSuperheroByIdUseCase.execute(superhero.getId())).thenReturn(Optional.of(superhero));
-        when(repository.updateSuperhero(superhero.getId(), superhero.getName())).thenReturn(1);
+        when(repository.updateSuperheroSetNameForId(superhero.getId(), superhero.getName())).thenReturn(1);
         assertThat(useCase.execute(superhero)).isNotZero();
         verify(findSuperheroByIdUseCase).execute(superhero.getId());
-        verify(repository).updateSuperhero(superhero.getId(), superhero.getName());
+        verify(repository).updateSuperheroSetNameForId(superhero.getId(), superhero.getName());
     }
 }

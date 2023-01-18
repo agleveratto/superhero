@@ -20,7 +20,7 @@ public class ModifySuperheroUseCaseImpl implements ModifySuperheroUseCase {
     @Override
     public int execute(Superhero superhero) {
         if(findSuperheroByIdUseCase.execute(superhero.getId()).isPresent()){
-            return repository.updateSuperhero(superhero.getId(), superhero.getName());
+            return repository.updateSuperheroSetNameForId(superhero.getId(), superhero.getName());
         }
         return 0;
     }
