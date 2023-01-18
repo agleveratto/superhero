@@ -60,4 +60,9 @@ public class SuperheroServiceTest {
         assertThat(superheroService.findById(1L)).isNotNull();
         verify(findSuperheroByIdUseCase).execute(1L);
     }
+
+    @Test
+    void findById_givenId_thenThrowNotFoundException(){
+        assertThatThrownBy(() -> superheroService.findById(2L)).isInstanceOf(NotFoundException.class);
+    }
 }
