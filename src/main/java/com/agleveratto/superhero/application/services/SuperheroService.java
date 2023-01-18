@@ -6,6 +6,7 @@ import com.agleveratto.superhero.domain.usecases.FindSuperheroByIdUseCase;
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,5 +33,9 @@ public class SuperheroService {
         if (optionalSuperhero.isEmpty())
             throw new NotFoundException("superhero not found by id " + id);
         return optionalSuperhero.get();
+    }
+
+    public List<Superhero> findByContains(String nameContains) {
+        return new ArrayList<>();
     }
 }

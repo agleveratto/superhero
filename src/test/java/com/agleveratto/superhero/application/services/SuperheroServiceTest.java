@@ -67,4 +67,9 @@ public class SuperheroServiceTest {
         assertThatThrownBy(() -> superheroService.findById(2L)).isInstanceOf(NotFoundException.class);
         verify(findSuperheroByIdUseCase).execute(2L);
     }
+
+    @Test
+    void findByContains_givenString_thenReturnList(){
+        assertThat(superheroService.findByContains("superman")).isNotEmpty();
+    }
 }
