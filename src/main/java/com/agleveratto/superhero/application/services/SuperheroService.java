@@ -4,6 +4,7 @@ import com.agleveratto.superhero.application.exceptions.NotFoundException;
 import com.agleveratto.superhero.domain.usecases.FindAllSuperheroUseCase;
 import com.agleveratto.superhero.domain.usecases.FindSuperheroByIdUseCase;
 import com.agleveratto.superhero.domain.usecases.FindSuperheroNameLikeUseCase;
+import com.agleveratto.superhero.domain.usecases.ModifySuperheroUseCase;
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
 import org.springframework.stereotype.Service;
 
@@ -43,5 +44,9 @@ public class SuperheroService {
         if (superheroes.isEmpty())
             throw new NotFoundException("superheroes not found that contains the word [" + nameContains + "] into their name");
         return superheroes;
+    }
+
+    public int update(Superhero superhero) {
+        return 0;
     }
 }

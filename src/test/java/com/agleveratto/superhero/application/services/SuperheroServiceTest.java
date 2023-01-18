@@ -85,4 +85,9 @@ public class SuperheroServiceTest {
         assertThatThrownBy(() -> superheroService.findByContains("men")).isInstanceOf(NotFoundException.class);
         verify(findSuperheroNameLikeUseCase).execute("men");
     }
+
+    @Test
+    void update_givenSuperheroModified_thenApplyModifications(){
+        assertThat(superheroService.update(superhero)).isNotZero();
+    }
 }
