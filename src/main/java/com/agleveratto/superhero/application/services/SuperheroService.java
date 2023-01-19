@@ -3,6 +3,8 @@ package com.agleveratto.superhero.application.services;
 import com.agleveratto.superhero.application.exceptions.NotFoundException;
 import com.agleveratto.superhero.domain.usecases.*;
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -11,21 +13,23 @@ import java.util.Optional;
 
 @Service
 public class SuperheroService {
-
+    Logger logger = LoggerFactory.getLogger(SuperheroService.class);
     private final FindAllSuperheroUseCase findAllSuperheroUseCase;
     private final FindSuperheroByIdUseCase findSuperheroByIdUseCase;
     private final FindSuperheroNameLikeUseCase findSuperheroNameLikeUseCase;
     private final ModifySuperheroUseCase modifySuperheroUseCase;
     private final DeleteSuperheroUseCase deleteSuperheroUseCase;
+    private final RedisService redisService;
 
     public SuperheroService(FindAllSuperheroUseCase findAllSuperheroUseCase, FindSuperheroByIdUseCase findSuperheroByIdUseCase,
                             FindSuperheroNameLikeUseCase findSuperheroNameLikeUseCase, ModifySuperheroUseCase modifySuperheroUseCase,
-                            DeleteSuperheroUseCase deleteSuperheroUseCase) {
+                            DeleteSuperheroUseCase deleteSuperheroUseCase, RedisService redisService) {
         this.findAllSuperheroUseCase = findAllSuperheroUseCase;
         this.findSuperheroByIdUseCase = findSuperheroByIdUseCase;
         this.findSuperheroNameLikeUseCase = findSuperheroNameLikeUseCase;
         this.modifySuperheroUseCase = modifySuperheroUseCase;
         this.deleteSuperheroUseCase = deleteSuperheroUseCase;
+        this.redisService = redisService;
     }
 
     public List<Superhero> findAll() {
@@ -36,10 +40,22 @@ public class SuperheroService {
     }
 
     public Superhero findById(Long id) {
+        Superhero superheroCached = redisService.getSuperhero(id);
+
+        if (superheroCached != null){
+            logger.info("Superhero cached");
+            return superheroCached;
+        }
+
+        logger.info("superhero not cached, finding into database");
         Optional<Superhero> optionalSuperhero = findSuperheroByIdUseCase.execute(id);
         if (optionalSuperhero.isEmpty())
             throw new NotFoundException("superhero not found by id " + id);
-        return optionalSuperhero.get();
+
+        Superhero superhero = optionalSuperhero.get();
+        logger.info("caching superhero for future requests");
+        redisService.setSuperhero(id, superhero);
+        return superhero;
     }
 
     public List<Superhero> findByContains(String nameContains) {
@@ -60,7 +76,7 @@ public class SuperheroService {
         try{
             deleteSuperheroUseCase.execute(id);
         } catch (EmptyResultDataAccessException exception) {
-            throw new NotFoundException(exception.getMessage());
+            throw new NotFoundException("superhero not found by id " + id);
         }
         return "superhero deleted";
     }

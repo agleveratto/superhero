@@ -39,6 +39,9 @@ public class SuperheroServiceTest {
     @Mock
     DeleteSuperheroUseCase deleteSuperheroUseCase;
 
+    @Mock
+    RedisService redisService;
+
     private static Superhero superhero;
 
     @BeforeAll
@@ -71,6 +74,7 @@ public class SuperheroServiceTest {
 
     @Test
     void findById_givenId_thenThrowNotFoundException(){
+        when(redisService.getSuperhero(2L)).thenReturn(null);
         when(findSuperheroByIdUseCase.execute(2L)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> superheroService.findById(2L)).isInstanceOf(NotFoundException.class);
         verify(findSuperheroByIdUseCase).execute(2L);
@@ -93,7 +97,7 @@ public class SuperheroServiceTest {
     @Test
     void update_givenSuperheroModified_thenApplyModifications(){
         when(modifySuperheroUseCase.execute(superhero)).thenReturn(1);
-        assertThat(superheroService.update(superhero)).isEqualTo("superhero updated");
+        assertThat(superheroService.update(superhero)).isEqualTo("superhero modified");
         verify(modifySuperheroUseCase).execute(superhero);
     }
 
