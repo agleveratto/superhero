@@ -1,0 +1,10 @@
+version: '1'
+services:
+  superhero:
+    container_name: superhero-app
+    build:
+      context: superhero
+      dockerfile: Dockerfile
+    image: superhero-app:latest
+    ports:
+      - 18888:8888
