@@ -33,9 +33,22 @@ public class SuperheroService {
     }
 
     public List<Superhero> findAll() {
+        List<Superhero> superheroListCached = redisService.getAllSuperheroes();
+
+        if (!superheroListCached.isEmpty()){
+            logger.info("findAll Superheroes cached");
+            return superheroListCached;
+        }
+
+        logger.info("findAll superheroes not cached, finding into database");
         List<Superhero> superheroes = findAllSuperheroUseCase.execute();
+
         if(superheroes.isEmpty())
             throw new NotFoundException("superheroes not found!");
+
+        logger.info("caching superheroes for future requests");
+        redisService.setAllSuperheroes(superheroes);
+
         return superheroes;
     }
 
@@ -49,19 +62,35 @@ public class SuperheroService {
 
         logger.info("superhero not cached, finding into database");
         Optional<Superhero> optionalSuperhero = findSuperheroByIdUseCase.execute(id);
+
         if (optionalSuperhero.isEmpty())
             throw new NotFoundException("superhero not found by id " + id);
 
         Superhero superhero = optionalSuperhero.get();
+
         logger.info("caching superhero for future requests");
         redisService.setSuperhero(id, superhero);
+
         return superhero;
     }
 
     public List<Superhero> findByContains(String nameContains) {
+        List<Superhero> superheroListCached = redisService.getSuperheroesByName(nameContains);
+
+        if (superheroListCached != null){
+            logger.info("Superheroes cached");
+            return superheroListCached;
+        }
+
+        logger.info("superheroes not cached, finding into database");
         List<Superhero> superheroes = findSuperheroNameLikeUseCase.execute(nameContains);
+
         if (superheroes.isEmpty())
             throw new NotFoundException("superheroes not found that contains the word [" + nameContains + "] into their name");
+
+        logger.info("caching superhero for future requests");
+        redisService.setSuperheroesByName(nameContains, superheroes);
+
         return superheroes;
     }
 
@@ -78,6 +107,7 @@ public class SuperheroService {
         } catch (EmptyResultDataAccessException exception) {
             throw new NotFoundException("superhero not found by id " + id);
         }
+        redisService.deleteKeyCached(id);
         return "superhero deleted";
     }
 }
