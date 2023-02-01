@@ -77,7 +77,7 @@ public class SuperheroService {
     public List<Superhero> findByContains(String nameContains) {
         List<Superhero> superheroListCached = redisService.getSuperheroesByName(nameContains);
 
-        if (superheroListCached != null){
+        if (!superheroListCached.isEmpty()){
             logger.info("Superheroes cached");
             return superheroListCached;
         }

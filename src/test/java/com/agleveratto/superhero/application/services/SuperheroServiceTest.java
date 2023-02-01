@@ -15,8 +15,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class SuperheroServiceTest {
@@ -53,16 +52,28 @@ public class SuperheroServiceTest {
 
     @Test
     void findAll_whenCallMethod_thenReturnList(){
+        when(redisService.getAllSuperheroes()).thenReturn(List.of());
         when(findAllSuperheroUseCase.execute()).thenReturn(List.of(superhero));
-        assertThat(superheroService.findAll()).isNotEmpty();
+        assertThat(superheroService.findAll()).isNotEmpty().containsExactly(superhero);
+        verify(redisService).getAllSuperheroes();
         verify(findAllSuperheroUseCase).execute();
     }
 
     @Test
     void findAll_whenCallMethod_thenThrowNotFoundException(){
+        when(redisService.getAllSuperheroes()).thenReturn(List.of());
         when(findAllSuperheroUseCase.execute()).thenReturn(List.of());
         assertThatThrownBy(() -> superheroService.findAll()).isInstanceOf(NotFoundException.class);
+        verify(redisService).getAllSuperheroes();
         verify(findAllSuperheroUseCase).execute();
+    }
+
+    @Test
+    void findAll_whenCallMethod_thenReturnCachedList(){
+        when(redisService.getAllSuperheroes()).thenReturn(List.of(superhero));
+        assertThat(superheroService.findAll()).isNotEmpty().containsExactly(superhero);
+        verify(redisService).getAllSuperheroes();
+        verify(findAllSuperheroUseCase, never()).execute();
     }
 
     @Test
