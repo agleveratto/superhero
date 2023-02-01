@@ -104,16 +104,28 @@ public class SuperheroServiceTest {
 
     @Test
     void findByContains_givenString_thenReturnList(){
+        when(redisService.getSuperheroesByName("man")).thenReturn(List.of());
         when(findSuperheroNameLikeUseCase.execute("man")).thenReturn(List.of(superhero));
-        assertThat(superheroService.findByContains("man")).isNotEmpty();
+        assertThat(superheroService.findByContains("man")).isNotEmpty().containsExactly(superhero);
+        verify(redisService).getSuperheroesByName("man");
         verify(findSuperheroNameLikeUseCase).execute("man");
     }
 
     @Test
     void findByContains_givenAString_thenThrowNotFoundException() {
+        when(redisService.getSuperheroesByName("men")).thenReturn(List.of());
         when(findSuperheroNameLikeUseCase.execute("men")).thenReturn(List.of());
         assertThatThrownBy(() -> superheroService.findByContains("men")).isInstanceOf(NotFoundException.class);
+        verify(redisService).getSuperheroesByName("men");
         verify(findSuperheroNameLikeUseCase).execute("men");
+    }
+
+    @Test
+    void findByContains_givenString_thenReturnCachedList(){
+        when(redisService.getSuperheroesByName("man")).thenReturn(List.of(superhero));
+        assertThat(superheroService.findByContains("man")).isNotEmpty().containsExactly(superhero);
+        verify(redisService).getSuperheroesByName("man");
+        verify(findSuperheroNameLikeUseCase, never()).execute("man");
     }
 
     @Test
