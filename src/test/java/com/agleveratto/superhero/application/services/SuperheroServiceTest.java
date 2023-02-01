@@ -78,8 +78,10 @@ public class SuperheroServiceTest {
 
     @Test
     void findById_givenId_thenReturnSuperhero(){
+        when(redisService.getSuperhero(1L)).thenReturn(null);
         when(findSuperheroByIdUseCase.execute(1L)).thenReturn(Optional.of(superhero));
-        assertThat(superheroService.findById(1L)).isNotNull();
+        assertThat(superheroService.findById(1L)).isNotNull().isEqualTo(superhero);
+        verify(redisService).getSuperhero(1L);
         verify(findSuperheroByIdUseCase).execute(1L);
     }
 
@@ -88,7 +90,16 @@ public class SuperheroServiceTest {
         when(redisService.getSuperhero(2L)).thenReturn(null);
         when(findSuperheroByIdUseCase.execute(2L)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> superheroService.findById(2L)).isInstanceOf(NotFoundException.class);
+        verify(redisService).getSuperhero(2L);
         verify(findSuperheroByIdUseCase).execute(2L);
+    }
+
+    @Test
+    void findById_givenId_thenReturnCachedSuperhero(){
+        when(redisService.getSuperhero(1L)).thenReturn(superhero);
+        assertThat(superheroService.findById(1L)).isNotNull().isEqualTo(superhero);
+        verify(redisService).getSuperhero(1L);
+        verify(findSuperheroByIdUseCase, never()).execute(1L);
     }
 
     @Test
