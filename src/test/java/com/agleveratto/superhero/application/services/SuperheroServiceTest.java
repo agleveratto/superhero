@@ -146,6 +146,7 @@ public class SuperheroServiceTest {
     void delete_givenId_thenDeleteSuperhero(){
         superheroService.delete(1L);
         verify(deleteSuperheroUseCase).execute(1L);
+        verify(redisService).deleteKeyCached(1L);
     }
 
     @Test
@@ -154,5 +155,6 @@ public class SuperheroServiceTest {
         superheroNotExisted.setId(2L);
         superheroNotExisted.setName("betman");
         assertThatThrownBy(() -> superheroService.update(superheroNotExisted)).isInstanceOf(NotFoundException.class);
+        verify(redisService,never()).deleteKeyCached(2L);
     }
 }
