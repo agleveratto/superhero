@@ -2,6 +2,7 @@ package com.agleveratto.superhero.infrastructure.config;
 
 import com.agleveratto.superhero.infrastructure.utils.UserUtils;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,8 +17,6 @@ import java.io.IOException;
 
 @Configuration
 public class JwtAuthFilter extends OncePerRequestFilter {
-    public static final String AUTHORIZATION = "AUTHORIZATION";
-
     private final UserUtils userUtils;
     private final JwtUtils jwtUtils;
 
@@ -29,7 +28,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        final String authHeader = request.getHeader(AUTHORIZATION);
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String userMail;
         final String jwtToken;
 

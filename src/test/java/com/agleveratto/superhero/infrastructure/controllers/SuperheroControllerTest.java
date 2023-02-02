@@ -1,5 +1,6 @@
 package com.agleveratto.superhero.infrastructure.controllers;
 
+import com.agleveratto.superhero.application.exceptions.NotFoundException;
 import com.agleveratto.superhero.application.services.SuperheroService;
 import com.agleveratto.superhero.infrastructure.config.JwtUtils;
 import com.agleveratto.superhero.infrastructure.entities.Superhero;
@@ -66,6 +67,17 @@ public class SuperheroControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "agleveratto@gmail.com")
+    void findAll_withValidMockUser_thenReturn404() throws Exception {
+        when(superheroService.findAll()).thenThrow(NotFoundException.class);
+        mockMvc.perform(get("/api/v1/"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty());
+        verify(superheroService).findAll();
+    }
+
+    @Test
     void findById_withoutToken_thenReturn401() throws Exception {
         mockMvc.perform(get("/api/v1/{id}", superhero.getId()))
                 .andExpect(status().isUnauthorized());
@@ -82,6 +94,17 @@ public class SuperheroControllerTest {
                 .andExpect(jsonPath("$.id").value(superhero.getId()))
                 .andExpect(jsonPath("$.name").value(superhero.getName()));
         verify(superheroService).findById(superhero.getId());
+    }
+
+    @Test
+    @WithMockUser(username = "agleveratto@gmail.com")
+    void findById_withValidMockUser_thenReturn404() throws Exception {
+        when(superheroService.findById(2L)).thenThrow(NotFoundException.class);
+        mockMvc.perform(get("/api/v1/{id}", 2L))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty());
+        verify(superheroService).findById(2L);
     }
 
     @Test
@@ -102,6 +125,17 @@ public class SuperheroControllerTest {
                 .andExpect(jsonPath("$[0].id").value(superhero.getId()))
                 .andExpect(jsonPath("$[0].name").value(superhero.getName()));
         verify(superheroService).findByContains("man");
+    }
+
+    @Test
+    @WithMockUser(username = "agleveratto@gmail.com")
+    void findByContains_withValidMockUser_thenReturn404() throws Exception {
+        when(superheroService.findByContains("men")).thenThrow(NotFoundException.class);
+        mockMvc.perform(get("/api/v1/name/{nameContains}", "men"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty());
+        verify(superheroService).findByContains("men");
     }
 
     @Test

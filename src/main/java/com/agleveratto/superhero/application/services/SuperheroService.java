@@ -9,7 +9,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SuperheroService {
@@ -33,7 +32,7 @@ public class SuperheroService {
     }
 
     public List<Superhero> findAll() {
-        List<Superhero> superheroListCached = redisService.getAllSuperheroes();
+        var superheroListCached = redisService.getAllSuperheroes();
 
         if (!superheroListCached.isEmpty()){
             logger.info("findAll Superheroes cached");
@@ -41,7 +40,7 @@ public class SuperheroService {
         }
 
         logger.info("findAll superheroes not cached, finding into database");
-        List<Superhero> superheroes = findAllSuperheroUseCase.execute();
+        var superheroes = findAllSuperheroUseCase.execute();
 
         if(superheroes.isEmpty())
             throw new NotFoundException("superheroes not found!");
@@ -53,7 +52,7 @@ public class SuperheroService {
     }
 
     public Superhero findById(Long id) {
-        Superhero superheroCached = redisService.getSuperhero(id);
+        var superheroCached = redisService.getSuperhero(id);
 
         if (superheroCached != null){
             logger.info("Superhero cached");
@@ -61,12 +60,12 @@ public class SuperheroService {
         }
 
         logger.info("superhero not cached, finding into database");
-        Optional<Superhero> optionalSuperhero = findSuperheroByIdUseCase.execute(id);
+        var optionalSuperhero = findSuperheroByIdUseCase.execute(id);
 
         if (optionalSuperhero.isEmpty())
             throw new NotFoundException("superhero not found by id " + id);
 
-        Superhero superhero = optionalSuperhero.get();
+        var superhero = optionalSuperhero.get();
 
         logger.info("caching superhero for future requests");
         redisService.setSuperhero(id, superhero);
@@ -75,7 +74,7 @@ public class SuperheroService {
     }
 
     public List<Superhero> findByContains(String nameContains) {
-        List<Superhero> superheroListCached = redisService.getSuperheroesByName(nameContains);
+        var superheroListCached = redisService.getSuperheroesByName(nameContains);
 
         if (!superheroListCached.isEmpty()){
             logger.info("Superheroes cached");
@@ -83,7 +82,7 @@ public class SuperheroService {
         }
 
         logger.info("superheroes not cached, finding into database");
-        List<Superhero> superheroes = findSuperheroNameLikeUseCase.execute(nameContains);
+        var superheroes = findSuperheroNameLikeUseCase.execute(nameContains);
 
         if (superheroes.isEmpty())
             throw new NotFoundException("superheroes not found that contains the word [" + nameContains + "] into their name");
@@ -95,7 +94,7 @@ public class SuperheroService {
     }
 
     public String update(Superhero superhero) {
-        int rowsModified = modifySuperheroUseCase.execute(superhero);
+        var rowsModified = modifySuperheroUseCase.execute(superhero);
         if (rowsModified == 0)
             throw new NotFoundException("superhero not found by id " + superhero.getId());
         return "superhero modified";

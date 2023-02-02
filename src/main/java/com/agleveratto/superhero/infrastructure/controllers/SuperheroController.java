@@ -38,7 +38,7 @@ public class SuperheroController {
     }
 
     @ExecutionTime
-    @PutMapping(value = "/")
+    @GetMapping(value = "/update")
     public ResponseEntity<String> update(@RequestBody Superhero superhero){
         return ResponseEntity.ok(superheroService.update(superhero));
     }
