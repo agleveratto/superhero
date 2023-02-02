@@ -1,4 +1,4 @@
-package com.agleveratto.superhero.boot;
+package com.agleveratto.superhero;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

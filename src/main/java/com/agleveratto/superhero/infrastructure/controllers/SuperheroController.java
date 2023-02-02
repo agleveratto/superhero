@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class SuperheroController {
 
     private final SuperheroService superheroService;

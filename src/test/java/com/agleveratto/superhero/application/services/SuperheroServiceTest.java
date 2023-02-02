@@ -151,9 +151,7 @@ public class SuperheroServiceTest {
 
     @Test
     void delete_givenNotExistId_thenThrowNotFoundException(){
-        Superhero superheroNotExisted = new Superhero();
-        superheroNotExisted.setId(2L);
-        superheroNotExisted.setName("betman");
+        Superhero superheroNotExisted = new Superhero(2L, "betman");
         assertThatThrownBy(() -> superheroService.update(superheroNotExisted)).isInstanceOf(NotFoundException.class);
         verify(redisService,never()).deleteKeyCached(2L);
     }
