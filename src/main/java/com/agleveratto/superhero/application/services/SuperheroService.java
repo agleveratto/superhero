@@ -12,6 +12,8 @@ import java.util.List;
 
 @Service
 public class SuperheroService {
+    public static final String SUPERHEROES_NOT_FOUND = "superheroes not found!";
+    public static final String SUPERHERO_NOT_FOUND_BY_ID = "superhero not found by id ";
     Logger logger = LoggerFactory.getLogger(SuperheroService.class);
     private final FindAllSuperheroUseCase findAllSuperheroUseCase;
     private final FindSuperheroByIdUseCase findSuperheroByIdUseCase;
@@ -43,7 +45,7 @@ public class SuperheroService {
         var superheroes = findAllSuperheroUseCase.execute();
 
         if(superheroes.isEmpty())
-            throw new NotFoundException("superheroes not found!");
+            throw new NotFoundException(SUPERHEROES_NOT_FOUND);
 
         logger.info("caching superheroes for future requests");
         redisService.setAllSuperheroes(superheroes);
@@ -63,7 +65,7 @@ public class SuperheroService {
         var optionalSuperhero = findSuperheroByIdUseCase.execute(id);
 
         if (optionalSuperhero.isEmpty())
-            throw new NotFoundException("superhero not found by id " + id);
+            throw new NotFoundException(new StringBuilder().append(SUPERHERO_NOT_FOUND_BY_ID).append(id).toString());
 
         var superhero = optionalSuperhero.get();
 
@@ -85,7 +87,11 @@ public class SuperheroService {
         var superheroes = findSuperheroNameLikeUseCase.execute(nameContains);
 
         if (superheroes.isEmpty())
-            throw new NotFoundException("superheroes not found that contains the word [" + nameContains + "] into their name");
+            throw new NotFoundException(new StringBuilder()
+                    .append("superheroes not found that contains the word [")
+                    .append(nameContains)
+                    .append("] into their name")
+                    .toString());
 
         logger.info("caching superhero for future requests");
         redisService.setSuperheroesByName(nameContains, superheroes);
@@ -96,7 +102,10 @@ public class SuperheroService {
     public String update(Superhero superhero) {
         var rowsModified = modifySuperheroUseCase.execute(superhero);
         if (rowsModified == 0)
-            throw new NotFoundException("superhero not found by id " + superhero.getId());
+            throw new NotFoundException(new StringBuilder()
+                    .append(SUPERHERO_NOT_FOUND_BY_ID)
+                    .append(superhero.getId())
+                    .toString());
         return "superhero modified";
     }
 
@@ -104,7 +113,10 @@ public class SuperheroService {
         try{
             deleteSuperheroUseCase.execute(id);
         } catch (EmptyResultDataAccessException exception) {
-            throw new NotFoundException("superhero not found by id " + id);
+            throw new NotFoundException(new StringBuilder()
+                    .append(SUPERHERO_NOT_FOUND_BY_ID)
+                    .append(id)
+                    .toString());
         }
         redisService.deleteKeyCached(id);
         return "superhero deleted";
