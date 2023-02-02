@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.never;
@@ -65,6 +66,15 @@ public class SuperheroControllerTest {
                 .andExpect(status().isUnauthorized())
         ;
         verify(superheroService, never()).findByContains("man");
+    }
+
+    @Test
+    @WithMockUser(username = "agleveratto@gmail.com")
+    void findByContains_withValidMockUser_thenReturn200() throws Exception {
+        mockMvc.perform(get("/api/v1/name/{nameContains}", "man"))
+                .andExpect(status().isOk())
+        ;
+        verify(superheroService).findByContains("man");
     }
 
     @Test
