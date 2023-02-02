@@ -14,6 +14,8 @@ import java.util.List;
 public class SuperheroService {
     public static final String SUPERHEROES_NOT_FOUND = "superheroes not found!";
     public static final String SUPERHERO_NOT_FOUND_BY_ID = "superhero not found by id ";
+    public static final String SUPERHERO_MODIFIED = "superhero modified";
+    public static final String SUPERHERO_DELETED = "superhero deleted";
     Logger logger = LoggerFactory.getLogger(SuperheroService.class);
     private final FindAllSuperheroUseCase findAllSuperheroUseCase;
     private final FindSuperheroByIdUseCase findSuperheroByIdUseCase;
@@ -106,7 +108,7 @@ public class SuperheroService {
                     .append(SUPERHERO_NOT_FOUND_BY_ID)
                     .append(superhero.getId())
                     .toString());
-        return "superhero modified";
+        return SUPERHERO_MODIFIED;
     }
 
     public String delete(Long id) {
@@ -119,6 +121,6 @@ public class SuperheroService {
                     .toString());
         }
         redisService.deleteKeyCached(id);
-        return "superhero deleted";
+        return SUPERHERO_DELETED;
     }
 }
