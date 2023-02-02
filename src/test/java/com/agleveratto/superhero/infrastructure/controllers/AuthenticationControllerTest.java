@@ -15,12 +15,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,7 +40,7 @@ public class AuthenticationControllerTest {
     @MockBean
     JwtUtils jwtUtils;
 
-    static AuthorizationRequest adminRequest, userRequest;
+    static AuthorizationRequest adminRequest, userWithoutRoles;
     static UserDetails userDetails;
 
     @BeforeAll
@@ -48,21 +49,37 @@ public class AuthenticationControllerTest {
         adminRequest.setEmail("agleveratto@gmail.com");
         adminRequest.setPassword("password");
 
-        userRequest = new AuthorizationRequest("enzo.guido@mindata.es","mindata");
+        userWithoutRoles = new AuthorizationRequest("enzo.guido@gmail.com","123123");
 
         userDetails = new User(adminRequest.getEmail(), adminRequest.getPassword(), Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN")));
     }
 
     @Test
-    void authenticate__() throws Exception {
+    @WithUserDetails
+    void authenticate_givenValidUser_thenReturn200() throws Exception {
+        when(userUtils.findUserByEmail(adminRequest.getEmail())).thenReturn(userDetails);
         mockMvc.perform(post("/api/v1/auth/authenticate")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(adminRequest)))
-                .andExpect(status().isForbidden()) // TODO revisar
-        ;
-        verify(authenticationManager, never()).authenticate(new UsernamePasswordAuthenticationToken(adminRequest.getEmail(), adminRequest.getPassword()));
-        verify(userUtils, never()).findUserByEmail(adminRequest.getEmail());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(adminRequest))
+                        .with(csrf()))
+                .andExpect(status().isOk());
+        verify(authenticationManager).authenticate(new UsernamePasswordAuthenticationToken(adminRequest.getEmail(), adminRequest.getPassword()));
+        verify(userUtils).findUserByEmail(adminRequest.getEmail());
+        verify(jwtUtils).generateToken(userDetails);
     }
 
+    @Test
+    @WithUserDetails
+    void authenticate_givenInvalidUser_thenReturn400() throws Exception {
+        when(userUtils.findUserByEmail(adminRequest.getEmail())).thenReturn(null);
+        mockMvc.perform(post("/api/v1/auth/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(userWithoutRoles))
+                        .with(csrf()))
+                .andExpect(status().isBadRequest());
+        verify(authenticationManager).authenticate(new UsernamePasswordAuthenticationToken(userWithoutRoles.getEmail(), userWithoutRoles.getPassword()));
+        verify(userUtils).findUserByEmail(userWithoutRoles.getEmail());
+        verify(jwtUtils, never()).generateToken(userDetails);
+    }
 
 }
