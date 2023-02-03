@@ -16,9 +16,11 @@ public class ExecutionTimeAdvice {
         long startTime = System.currentTimeMillis();
         Object object = point.proceed();
         long endTime = System.currentTimeMillis();
-        logger.info("Class Name: "+ point.getSignature().getDeclaringTypeName() +". " +
-                "Method Name: "+ point.getSignature().getName() + ". " +
-                "Time taken for Execution is: " + (endTime-startTime) +"ms");
+        logger.info(new StringBuilder()
+                .append("Class Name: ").append(point.getSignature().getDeclaringTypeName()).append(". ")
+                .append("Method Name: ").append(point.getSignature().getName()).append(". ")
+                .append("Time taken for Execution is: ").append(endTime-startTime).append("ms")
+                .toString());
         return object;
     }
 }
