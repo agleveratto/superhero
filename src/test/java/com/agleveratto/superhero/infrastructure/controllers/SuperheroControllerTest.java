@@ -8,16 +8,20 @@ import com.agleveratto.superhero.infrastructure.utils.UserUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -38,6 +42,9 @@ public class SuperheroControllerTest {
     JwtUtils jwtUtils;
 
     private static Superhero superhero;
+
+    public static final String SUPERHERO_MODIFIED = "superhero modified";
+    public static final String SUPERHERO_DELETED = "superhero deleted";
 
     @BeforeAll
     static void setup(){
@@ -139,18 +146,42 @@ public class SuperheroControllerTest {
     }
 
     @Test
-    void update_withoutToken_thenReturn403() throws Exception {
+    void update_withoutUserDetails_thenReturn401() throws Exception {
         mockMvc.perform(put("/api/v1/")
-                        .content(new ObjectMapper().writeValueAsString(superhero)))
-                .andExpect(status().isForbidden());
-        verify(superheroService, never()).update(superhero);
+                    .with(csrf()))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void delete_withoutToken_thenReturn403() throws Exception {
-        mockMvc.perform(delete("/api/v1/{id}", superhero.getId()))
-                .andExpect(status().isForbidden());
-        verify(superheroService, never()).delete(superhero.getId());
+    @WithUserDetails
+    void update_withUserDetails_thenReturn200() throws Exception {
+        ArgumentCaptor<Superhero> superheroArgumentCaptor = ArgumentCaptor.forClass(Superhero.class);
+        when(superheroService.update(superhero)).thenReturn(SUPERHERO_MODIFIED);
+        mockMvc.perform(put("/api/v1/")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(superhero)))
+                .andExpect(status().isOk());
+        verify(superheroService).update(superheroArgumentCaptor.capture());
+        Superhero superheroUpdated = superheroArgumentCaptor.getValue();
+        assertThat(superheroUpdated.getId()).isEqualTo(superhero.getId());
+        assertThat(superheroUpdated.getName()).isEqualTo(superhero.getName());
     }
 
+    @Test
+    void delete_withoutUserDetails_thenReturn401() throws Exception {
+        mockMvc.perform(delete("/api/v1/{id}", superhero.getId())
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithUserDetails
+    void delete_withUserDetails_thenReturn200() throws Exception {
+        when(superheroService.delete(superhero.getId())).thenReturn(SUPERHERO_DELETED);
+        mockMvc.perform(delete("/api/v1/{id}", superhero.getId())
+                        .with(csrf()))
+                .andExpect(status().isOk());
+        verify(superheroService).delete(superhero.getId());
+    }
 }
