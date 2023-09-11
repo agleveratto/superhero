@@ -21,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class JwtUtilsTest {
 
     public static final String VALID_USERNAME_JWT = "eyJhbGciOiJIUzI1NiJ9";
-    public static final String VALID_PASSWORD_JWT = "eyJzdWIiOiJhZ2xldmVyYXR0b0BnbWFpbC5jb20iLCJleHAiOjE2NzU0MzMxNTgsImlhdCI6MTY3NTM0Njc1OCwiYXV0aG9yaXRpZXMiOlt7ImF1dGhvcml0eSI6IlJPTEVfQURNSU4ifV19";
-    public static final String VALID_DATE_JWT = "suyczFTM8f5SG6AWXYvzIfAqXjCNcSjcD2tRCGBSpOI";
+    public static final String VALID_PASSWORD_JWT = "eyJzdWIiOiJhZ2xldmVyYXR0b0BnbWFpbC5jb20iLCJleHAiOjE2OTQ0ODEyNTQsImlhdCI6MTY5NDM5NDg1NCwiYXV0aG9yaXRpZXMiOlt7ImF1dGhvcml0eSI6IlJPTEVfQURNSU4ifV19";
+    public static final String VALID_DATE_JWT = "OS2zqgPGq21TIXWS6JafoUQtxUAWmRh2Lb0gWhltQEw";
     public static final String VALID_TOKEN = new StringJoiner(".")
             .add(VALID_USERNAME_JWT)
             .add(VALID_PASSWORD_JWT)
