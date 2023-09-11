@@ -134,14 +134,12 @@ public class RedisServiceTest {
 
     @Test
     void deleteKeyCached_givenId_deleteInAllCaches(){
-        String superheroJson = gson.toJson(superhero);
         String superheroListJson = gson.toJson(List.of(superhero));
-        when(valueOperations.get(superhero.getId().toString())).thenReturn(superheroJson);
         when(valueOperations.get("findAll")).thenReturn(superheroListJson);
 
         redisService.deleteKeyCached(superhero.getId());
 
-        verify(valueOperations, times(2)).get(anyString());
+        verify(valueOperations).get(anyString());
         verify(redisTemplate).delete(String.valueOf(superhero.getId()));
     }
 }

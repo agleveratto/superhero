@@ -48,18 +48,17 @@ public class RedisService {
         return gson.fromJson(redisTemplate.opsForValue().get(name), new TypeToken<List<Superhero>>(){}.getType());
     }
     public void deleteKeyCached(final Long id) {
-        Superhero itemToDelete = getSuperhero(id);
+        // here delete getSuperhero cache
+        redisTemplate.delete(String.valueOf(id));
+
         // here delete from getAllSuperheroes
         List<Superhero> getAllSuperheroesCached = getAllSuperheroes();
 
-        if(getAllSuperheroesCached.stream().anyMatch(superhero -> superhero.equals(itemToDelete))) {
-            getAllSuperheroesCached.remove(itemToDelete);
-            // update findAll values
-            setAllSuperheroes(getAllSuperheroesCached);
-        }
+        getAllSuperheroesCached.removeIf(superhero -> superhero.getId().equals(id));
 
-        // here delete getSuperhero cache
-        redisTemplate.delete(String.valueOf(id));
+        // update findAll values
+        setAllSuperheroes(getAllSuperheroesCached);
+
     }
 
 }

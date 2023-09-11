@@ -38,7 +38,7 @@ public class SuperheroService {
     public List<Superhero> findAll() {
         var superheroListCached = redisService.getAllSuperheroes();
 
-        if (!superheroListCached.isEmpty()){
+        if (superheroListCached != null && !superheroListCached.isEmpty()){
             logger.info("findAll Superheroes cached");
             return superheroListCached;
         }
@@ -80,7 +80,7 @@ public class SuperheroService {
     public List<Superhero> findByContains(String nameContains) {
         var superheroListCached = redisService.getSuperheroesByName(nameContains);
 
-        if (!superheroListCached.isEmpty()){
+        if (superheroListCached != null && !superheroListCached.isEmpty()){
             logger.info("Superheroes cached");
             return superheroListCached;
         }
